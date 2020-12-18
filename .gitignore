@@ -1,0 +1,63 @@
+# Created by .ignore support plugin (hsz.mobi)
+### Java template
+# Compiled class file
+*.class
+
+# Log file
+*.log
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+
+.DS_Store
+# BlueJ files
+*.ctxt
+
+# Mobile Tools for Java (J2ME)
+.mtj.tmp/
+
+# Package Files #
+*.jar
+*.war
+*.nar
+*.ear
+*.zip
+*.tar.gz
+*.rar
+
+# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
+hs_err_pid*
+
+.gitignore
+.idea/dataSources/02ddb92e-68f5-4761-8372-0f8fea414aee/storage_v2/_src_/schema/PUBLIC.aaZQjQ.meta
+.idea/dataSources/02ddb92e-68f5-4761-8372-0f8fea414aee/storage_v2/_src_/schema/SYS.rUIBAA.meta
+.idea/dataSources/02ddb92e-68f5-4761-8372-0f8fea414aee/storage_v2/_src_/schema/SYSTEM.L2avkg.meta
+build/
+.gradle/6.5/
+.gradle/6.6.1/
+.gradle/configuration-cache/
+.gradle/workspace-id.txt
+.gradle/workspace-id.txt.lock
+.idea/jarRepositories.xml
+.idea/runConfigurations/
+hs_err_pid11372.log
+replay_pid11372.log
+/.idea/workspace.xml
+/.gradle/3.0/taskArtifacts/*.bin
+/.gradle/3.0/taskArtifacts/*.lock
+/.gradle/buildOutputCleanup/*.bin
+/.settings/*.prefs
+/acube_gradle_trunk/repo/com/isomorphic/smartgwt/lgpl/smartgwt-skins/5.0-p20141012/*.md5
+/acube_gradle_trunk
+/.gradle/3.0/taskArtifacts/cache.properties
+/.idea/codeStyles/codeStyleConfig.xml
+/.idea/codeStyles/Project.xml
+/.settings/org.eclipse.wst.common.project.facet.core.xml
+/.run/Tomcat 9.run.xml
+/.gradle/buildOutputCleanup/*.lock
+/.gradle/checksums/*.lock
+/.gradle/checksums/sha1-checksums.bin
+/.gradle/checksums/md5-checksums.bin
