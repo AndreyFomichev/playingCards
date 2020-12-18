@@ -36,6 +36,7 @@ hs_err_pid*
 .idea/dataSources/02ddb92e-68f5-4761-8372-0f8fea414aee/storage_v2/_src_/schema/SYS.rUIBAA.meta
 .idea/dataSources/02ddb92e-68f5-4761-8372-0f8fea414aee/storage_v2/_src_/schema/SYSTEM.L2avkg.meta
 build/
+out/
 .gradle/6.5/
 .gradle/6.6.1/
 .gradle/configuration-cache/
