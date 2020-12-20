@@ -1,99 +1,106 @@
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.io.*;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
-
-class Pixels {
-
-    public Pixels(int[] whites, int[] blacks) {
-        this.whites = whites;
-        this.blacks = blacks;
-    }
-    public int[] getWhites() { return whites; }
-    //public void setWhites(int[] whites) { this.whites = whites;  }
-    public int[] getBlacks() { return blacks; }
-    //public void setBlacks(int[] blacks) { this.blacks = blacks; }
-    int[] whites;
-    int[] blacks;
-}
 
 public class Cards {
-    /* BufferedImage img = ImageIO.read(f); - зачитка картинки из файла
-       ImageIO.write(img, "png", f); - запись картинки в файл
-       img.getWidth(); img.getHeight(); - рамеры картинки
-       BufferedImage img1 = img.getSubimage(x, y, w, h); - взятие области в картинке
-       img.getRGB(x, y); - взятие цвета точки по координате
-       Color c = new Color(img.getRGB(x, y)); c.getRed(); c.getGreen(); c.getBlue(); c.equals(c1) - работа с цветом точки
-    Если нужно ставить масть в HTML коде, то комбинация будет следующей:
-        Для пики - &#9824;
-        Для черви - &#9829;
-        Для бубны - &#9830;
-        Для трефы - &#9827;
-    */
-    private static String encoded = " ";
-    private static BufferedImage img;
-    private static File currFile;
-    private static Pixels pixels;
-    private static Map<String, Pixels> symbols = new HashMap<>() ;
+    private static int cntBg1, maxErrors = 20, bgColor, xx, yy ;
+    private static String encoded = "", replacementStr = "";
+    private static BufferedImage img, img_clone;
+    private static String[][] symbols = {{ "2",  "3",  "4",  "5",  "6",  "7",  "8",  "9", "1",  "A",  "J",  "Q", "K",  "♠", "♣", "♥", "♦" },
+                                         {"20", "10", "20", "10", "20", "15", "14", "20", "14", "20", "11", "20", "15", "s50", "c50", "h50", "d30"  } };
+
     private static File dir;
 
-    private static void decodeImage(String name, int x, int y, int w, int h) throws IOException {
-        int color;
-        boolean founded;
-        BufferedImage buf = img.getSubimage(x, y,w, h); //- взятие области в картинке
-        ImageIO.write(buf, "png", new File(dir + "\\buf.png")); //- запись картинки в файл
-        for (String symbol : symbols.keySet()) {
-            founded = true;
-            pixels = symbols.get (symbol);
-            for (int q = 0; q < pixels.getWhites().length; q += 4) {
-                for (int i = pixels.getWhites()[q]; i <= pixels.getWhites()[q] + pixels.getWhites()[q + 2]; i++) {
-                    for (int j = pixels.getWhites()[q + 1]; j <= pixels.getWhites()[q + 1] + pixels.getWhites()[q + 3]; j++) {
-                         try {
-                             int col  = buf.getRGB(i, j);
-                             Color c = new Color(buf.getRGB(i, j));
-                             int red = c.getRed();
-                             int green = c.getGreen();
-                             int blue = c.getBlue();
-                             if (c.getRed() < 240 || c.getGreen() < 240 || c.getBlue() < 240)  {
-                                 founded = false;
-                                 break;
-                             }
-                         }catch(Exception e) {
-                             System.out.println(symbol + ", q=" +q + ", i="+i+",j="+j + ": " + e.getMessage());
-                         }
-                    }
+    private static int pixelsCount(BufferedImage image){
+        int cnt = 0;
+        for (int x = 0; x <= 60; x++)
+            for (int y = 0; y <= 82; y++)
+                if (image.getRGB(xx + x, yy + y) == bgColor)
+                    cnt++;
+        return  cnt;
+    }
 
+    private static String findSymbol(String symbol, int num) {
+        int cntBg2;
+        for (int deltax = 0; deltax <= 24; deltax++) {
+            Graphics2D g = img_clone.createGraphics();
+            g.drawImage(img, 0, 0, null);
+            //g.setFont(g.getFont().deriveFont(32f)); //Arson-Pro-Medium-otf
+            g.setFont(new Font("TJesterday Demo Regular", Font.PLAIN, (replacementStr.length() == 0 ? 30 : 46)));
+            g.setColor(Color.GREEN);
+            g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+            g.drawString(String.valueOf(symbol), xx - 2 + deltax + (replacementStr.length() == 0 ? 0 : 22)
+                    , yy + 23 + (replacementStr.length() == 0 ? 0 : 54));
+            g.dispose();
+            cntBg2 = pixelsCount(img_clone);
+            if (Math.abs(cntBg1 - cntBg2) <= maxErrors && cntBg1 > 500) {
+                encoded = encoded + (replacementStr.length() == 0 ? symbol : replacementStr);
+                System.out.println("FOUND symbol=" + symbol + ", num = " + num + ", xx=" + (xx + deltax) + ", cntBg1=" + cntBg1 + ", cntBg2=" + cntBg2 + ", diff=" + (cntBg1 - cntBg2) + ", bgcolor=" + new Color(bgColor).toString() + ", deltax=" + deltax);
+                //..File f = new File(dir + "\\buf"+symbol+".png");
+                //ImageIO.write(img_clone, "png", f);
+                //      Desktop dt = Desktop.getDesktop();
+                //  dt.open(f);
+                //Thread.sleep(1000);
+                return symbol;
+
+            } else {
+                //if (String.valueOf(symbol).equals("♣") ) {
+                if ( //replacementStr.length() > 0  //||
+                        symbol.equals("0")
+                                || symbol.equals("1")
+                ) {
+                    System.out.println("symbol=" + symbol + ", num = " + num + ", xx=" + (xx + deltax) + ", cntBg1=" + cntBg1 + ", cntBg2=" + cntBg2 + ", diff=" + (cntBg1 - cntBg2) + ", bgcolor=" + new Color(bgColor).toString() + ", deltax=" + deltax);
+                    //     File f = new File(dir + "\\buf.png");
+                    //     ImageIO.write(img_clone, "png", f);
+                    //     Desktop dt = Desktop.getDesktop();
+                    //     dt.open(f);
+                    //     Thread.sleep(1000);
                 }
+
             }
-            if (founded) {
-                encoded = encoded.concat(symbol);
-                //System.out.println("founded=" + founded);
-                return;
+        }
+        return "";
+    }
+
+    private static void decodeCard(int num) {
+        encoded = encoded.concat("/");
+        xx = 143 + 72 * num;
+        yy = 591;
+        int symbolsFound = 0;
+        bgColor = img.getRGB(xx + 3, yy + 10);
+        Color bgC = new Color(bgColor);
+        cntBg1 = pixelsCount(img);
+        for (int a = 0; a < symbols[0].length; a++) {
+            String symbol = symbols[0][a];
+            if (symbols[1][a].matches("[-+]?\\d+")) {
+                maxErrors = Integer.parseInt(symbols[1][a]);
+                replacementStr = "";
+            } else {
+                replacementStr = symbols[1][a].substring(0, 1);
+                if (symbols[1][a].substring(1).matches("[-+]?\\d+"))
+                    maxErrors = Integer.parseInt(symbols[1][a].substring(1));
             }
+            if ((symbolsFound >= 1 && replacementStr.length() == 0) || symbolsFound >= 2)
+                continue;
+            String s = findSymbol(symbol, num);
+            if (s.equals("1"))
+                encoded = encoded.concat("0");
+            if (s.length() > 0 )
+                symbolsFound++;
+
         }
     }
 
-    public static void main(String[] args) throws IOException {
-        symbols.put("6",  new Pixels(new int[]{6,0,0,9,   6,11,0,12, 7,0,0,6,   7,18,0,5, 12,8,20,0}, new int[]{}));
-        symbols.put("Q",  new Pixels(new int[]{0,0,6,24, 12,8,12,3, 14,12,3,5, 15,5,6,2, 0,24,30,0, 30,0,2,24  }, new int[]{}));
-        symbols.put("10", new Pixels(new int[]{6,5,0,17,  12,0,0,7,  12,14,0,9 }, new int[]{8,0,0,21}));
-        symbols.put("7",  new Pixels(new int[]{5,0,0,23,  5,5,9,0,   23,0,0,23, 16,16,0,7}, new int[]{}));
-        symbols.put("K",  new Pixels(new int[]{6,0,0,23,  11,0,0,8,  11,17,0,6, 20,8,0,5}, new int[]{}));
-        symbols.put("s",  new Pixels(new int[]{1,0,0,15,  2,0,0,13,  3,0,0,12,  4,0,0,11, 5,0,0,10,  6,0,0,9, 7,0,0,8, 8,0,0,7, 0,28,12,0, 18,28,13,0, 23,0,9,7 }, new int[]{}));
-
+    public static void main(String[] args) throws IOException, InterruptedException {
         if (args.length ==0 ) {
             System.out.println("Файл run.bat параметром принимает путь до папки с картинками");
         }
         String path = args[0];
-
         dir = new File(path); //path указывает на директорию
-        if (dir.listFiles() ==null || dir.listFiles().length ==0) {
+        if (dir.listFiles() == null || dir.listFiles().length ==0) {
             System.out.println("No files found in path: " + path);
             System.exit(1);
         }
@@ -104,24 +111,16 @@ public class Cards {
                 lst.add(file);
 
         for (File currFile:lst) {
-            String s= currFile.getName();
-            if (!currFile.getName().equals("10.png")) continue;
+            if (!currFile.getName().equals("6s5h10h.png")) continue;
             encoded = "";
             img = ImageIO.read(currFile); //зачитка картинки из файла
-            decodeImage("a1",145, 591,34, 33);
-            decodeImage("a2",145 + 24, 591 + 43,33, 33);
+            img_clone = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
 
-            decodeImage("b1",217, 591,34, 33);
-            decodeImage("b2",217 + 24, 591 + 43,33, 33);
-
-            decodeImage("c1",289, 591,34, 33);
-            decodeImage("c2",289 + 24, 591 + 43,33, 33);
-
-            decodeImage("d1",361, 591,34, 33);
-            decodeImage("d2",361 + 24, 591 + 43,33, 33);
-
-            decodeImage("e1",433, 591,34, 33);
-            decodeImage("e2",433 + 24, 591 + 43,33, 33);
+            decodeCard(0);
+            decodeCard(1);
+            decodeCard(2);
+            //decodeCard(3);
+            //decodeCard(4);
             System.out.println(currFile.getName() + " - " + encoded);
         }
     }
