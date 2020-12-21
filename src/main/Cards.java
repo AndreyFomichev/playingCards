@@ -22,7 +22,6 @@ public class Cards {
     }
 
     private static String findSymbol(String symbol, int num) throws IOException, InterruptedException {
-        int cntBg2;
         for (int deltaY = -2; deltaY <= +1; deltaY++) {
             for (int deltaX = 0; deltaX <= 15; deltaX++) {
                 Graphics2D g = img_clone.createGraphics();
@@ -33,7 +32,7 @@ public class Cards {
                 g.drawString(String.valueOf(symbol), xx - 2 + deltaX + (replacementStr.length() == 0 ? 0 : 22)
                         , yy + 23 + deltaY + (replacementStr.length() == 0 ? 0 : 54));
                 g.dispose();
-                cntBg2 = pixelsCount(img_clone);
+                int cntBg2 = pixelsCount(img_clone);
                 if (Math.abs(cntBg1 - cntBg2) <= maxErrors && cntBg1 > 500) {
                     encoded = encoded + (replacementStr.length() == 0 ? symbol : replacementStr);
                     return symbol;
