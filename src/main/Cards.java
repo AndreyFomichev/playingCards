@@ -10,7 +10,7 @@ public class Cards {
     private static String encoded = "", replacementStr = "", path = "";
     private static BufferedImage img, img_clone;
     private static String[][] symbols = {{ "2", "6", "8",   "3",  "4",   "5",  "7",  "9",  "1",  "A", "J",  "Q",  "K",  "♦",   "♣",   "♠",   "♥", },
-                                         {"15", "8", "16", "17", "20",  "12", "10", "12", "12", "20", "8", "25", "15", "d9", "c50", "s46", "h50",  } };
+                                         {"15", "8", "17", "17", "20",  "12", "10", "12", "12", "20", "8", "25", "15", "d9", "c50", "s46", "h50",  } };
     private static File dir;
 
     private static int pixelsCount(BufferedImage image){
@@ -29,7 +29,7 @@ public class Cards {
                 Graphics2D g = img_clone.createGraphics();
                 g.drawImage(img, 0, 0, null);
                 g.setFont(new Font("Jesterday Demo Regular", Font.PLAIN, (replacementStr.length() == 0 ? 30 : 46)));
-                g.setColor(Color.GREEN);
+                g.setColor(Color.BLACK);
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
                 g.drawString(String.valueOf(symbol), xx - 2 + deltax + (replacementStr.length() == 0 ? 0 : 22)
                         , yy + 23 + deltay + (replacementStr.length() == 0 ? 0 : 54));
