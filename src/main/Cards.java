@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Cards {
     private static int cntBg1, maxErrors = 20, bgColor, xx, yy ;
-    private static String encoded = "", replacementStr = "";
+    private static String encoded = "", replacementStr = "", path = "";
     private static BufferedImage img, img_clone;
     private static String[][] symbols = {{ "2", "6", "8",   "3",  "4",   "5",  "7",  "9",  "1",  "A", "J",  "Q",  "K",  "♦",   "♣",   "♠",   "♥", },
                                          {"15", "8", "16", "17", "20",  "12", "10", "12", "12", "20", "8", "25", "15", "d9", "c50", "s46", "h50",  } };
@@ -19,7 +19,7 @@ public class Cards {
             for (int y = 0; y <= 82; y++)
                 if (image.getRGB(xx + x, yy + y) == bgColor)
                     cnt++;
-        return  cnt;
+        return cnt;
     }
 
     private static String findSymbol(String symbol, int num) throws IOException, InterruptedException {
@@ -37,23 +37,7 @@ public class Cards {
                 cntBg2 = pixelsCount(img_clone);
                 if (Math.abs(cntBg1 - cntBg2) <= maxErrors && cntBg1 > 500) {
                     encoded = encoded + (replacementStr.length() == 0 ? symbol : replacementStr);
-                 // System.out.println("FOUND symbol=" + (replacementStr.length() == 0 ? symbol : replacementStr) + ", num = " + num + ", xx=" + (xx + deltax) + ", cntBg1=" + cntBg1 + ", cntBg2=" + cntBg2 + ", diff=" + (cntBg1 - cntBg2) + ", bgcolor=" + new Color(bgColor).toString() + ", deltax=" + deltax);
-
                     return symbol;
-
-                } else {
-                    //if (String.valueOf(symbol).equals("♣") ) {
-                    if ( //replacementStr.length() > 0  //||
-                            //replacementStr.equals("3")
-                                     symbol.equals("3")
-                    ) {
-               //         System.out.println("symbol=" + symbol + ", num = " + num + ", xx=" + (xx + deltax) + ", cntBg1=" + cntBg1 + ", cntBg2=" + cntBg2 + ", diff=" + (cntBg1 - cntBg2) + ", bgcolor=" + new Color(bgColor).toString() + ", deltax=" + deltax);
-                  //      File f = new File(dir + "\\buf.png");
-                    //    ImageIO.write(img_clone, "png", f);
-                      //  Desktop dt = Desktop.getDesktop();
-                    //    dt.open(f);
-                    //    Thread.sleep(1000);
-                    }
                 }
             }
         }
@@ -87,28 +71,15 @@ public class Cards {
         }
     }
 
-    public static void main(String[] args) throws IOException, InterruptedException {
-        if (args.length ==0 ) {
-            System.out.println("Файл run.bat параметром принимает путь до папки с картинками");
-            System.exit(1);
-        }
-        String path = args[0];
-        dir = new File(path); //path указывает на директорию
-        if (dir.listFiles() == null || dir.listFiles().length ==0) {
-            System.out.println("No files found in path: " + path);
-            System.exit(1);
-        }
+    public static void main(String[] args) throws Exception {
         List<File> lst = new ArrayList<>();
-
-        for ( File file : dir.listFiles() )
+        for ( File file : new File(args[0]).listFiles() )
             if ( file.isFile() )
                 lst.add(file);
-
         for (File currFile:lst) {
             encoded = "";
             img = ImageIO.read(currFile); //зачитка картинки из файла
             img_clone = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
-
             decodeCard(0);
             decodeCard(1);
             decodeCard(2);
