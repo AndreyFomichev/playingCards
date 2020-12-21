@@ -77,11 +77,8 @@ public class Cards {
             encoded = "";
             img = ImageIO.read(currFile); //зачитка картинки из файла
             img_clone = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
-            decodeCard(0);
-            decodeCard(1);
-            decodeCard(2);
-            decodeCard(3);
-            decodeCard(4);
+            for(int z=0; z<=4; z++)
+                decodeCard(z);
             System.out.println(currFile.getName() + " - " + encoded + (currFile.getName().substring(0, currFile.getName().indexOf('.')).equals(encoded) ? " (+)" : ""));
         }
     }
