@@ -1,0 +1,1 @@
+java -jar ./out/artifacts/cards_jar/Cards.jar %1

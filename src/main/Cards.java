@@ -6,14 +6,13 @@ import java.util.*;
 import java.util.List;
 
 public class Cards {
-    private static int cntBg1, maxErrors = 20, bgColor, xx, yy ;
+    private static int cntBg1, maxErrors = 20, bgColor, xx, yy = 591;
     private static String encoded = "", replacementStr = "", path = "";
     private static BufferedImage img, img_clone;
-    private static String[][] symbols = {{ "2", "6", "8",   "3",  "4",   "5",  "7",  "9",  "1",  "A", "J",  "Q",  "K",  "♦",   "♣",   "♠",   "♥", },
-                                         {"15", "8", "17", "17", "20",  "12", "10", "12", "12", "20", "8", "25", "15", "d9", "c50", "s46", "h50",  } };
-    private static File dir;
+    private static String[][] symbols = {{ "2", "6", "8",   "3",  "4",  "5",  "7",  "9",  "1",  "A", "J",  "Q",  "K",  "♦",   "♣",   "♠",   "♥", },
+                                         {"15", "8", "17", "17", "20", "12", "10", "12", "12", "20", "8", "25", "15", "d9", "c50", "s46", "h50",  } };
 
-    private static int pixelsCount(BufferedImage image){
+    private static int pixelsCount(BufferedImage image) {
         int cnt = 0;
         for (int x = 0; x <= 60; x++)
             for (int y = 0; y <= 82; y++)
@@ -24,15 +23,15 @@ public class Cards {
 
     private static String findSymbol(String symbol, int num) throws IOException, InterruptedException {
         int cntBg2;
-        for (int deltay = -2; deltay <=+1; deltay++) {
-            for (int deltax = 0; deltax <= 15; deltax++) {
+        for (int deltaY = -2; deltaY <= +1; deltaY++) {
+            for (int deltaX = 0; deltaX <= 15; deltaX++) {
                 Graphics2D g = img_clone.createGraphics();
                 g.drawImage(img, 0, 0, null);
                 g.setFont(new Font("Jesterday Demo Regular", Font.PLAIN, (replacementStr.length() == 0 ? 30 : 46)));
                 g.setColor(Color.BLACK);
                 g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
-                g.drawString(String.valueOf(symbol), xx - 2 + deltax + (replacementStr.length() == 0 ? 0 : 22)
-                        , yy + 23 + deltay + (replacementStr.length() == 0 ? 0 : 54));
+                g.drawString(String.valueOf(symbol), xx - 2 + deltaX + (replacementStr.length() == 0 ? 0 : 22)
+                        , yy + 23 + deltaY + (replacementStr.length() == 0 ? 0 : 54));
                 g.dispose();
                 cntBg2 = pixelsCount(img_clone);
                 if (Math.abs(cntBg1 - cntBg2) <= maxErrors && cntBg1 > 500) {
@@ -46,10 +45,8 @@ public class Cards {
 
     private static void decodeCard(int num) throws IOException, InterruptedException {
         xx = 143 + 72 * num;
-        yy = 591;
         int symbolsFound = 0;
         bgColor = img.getRGB(xx + 3, yy + 10);
-        Color bgC = new Color(bgColor);
         cntBg1 = pixelsCount(img);
         for (int a = 0; a < symbols[0].length; a++) {
             String symbol = symbols[0][a];
@@ -66,17 +63,17 @@ public class Cards {
             String s = findSymbol(symbol, num);
             if (s.equals("1"))
                 encoded = encoded.concat("0");
-            if (s.length() > 0 )
+            if (s.length() > 0)
                 symbolsFound++;
         }
     }
 
     public static void main(String[] args) throws Exception {
         List<File> lst = new ArrayList<>();
-        for ( File file : new File(args[0]).listFiles() )
-            if ( file.isFile() )
+        for (File file : new File(args[0]).listFiles())
+            if (file.isFile())
                 lst.add(file);
-        for (File currFile:lst) {
+        for (File currFile : lst) {
             encoded = "";
             img = ImageIO.read(currFile); //зачитка картинки из файла
             img_clone = new BufferedImage(img.getWidth(), img.getHeight(), img.getType());
@@ -85,7 +82,7 @@ public class Cards {
             decodeCard(2);
             decodeCard(3);
             decodeCard(4);
-            System.out.println(currFile.getName() + " - " + encoded + (currFile.getName().substring(0,currFile.getName().indexOf('.')).equals(encoded) ? " (+)":"" ));
+            System.out.println(currFile.getName() + " - " + encoded + (currFile.getName().substring(0, currFile.getName().indexOf('.')).equals(encoded) ? " (+)" : ""));
         }
     }
 }
